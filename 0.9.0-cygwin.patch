@@ -1,0 +1,21 @@
+--- origsrc/libvpx-0.9.0/build/make/configure.sh	2010-05-18 10:58:33.000000000 -0500
++++ src/libvpx-0.9.0/build/make/configure.sh	2010-05-31 13:13:12.829094800 -0500
+@@ -756,7 +756,7 @@ process_common_toolchain() {
+         AS=yasm
+         AS_SFX=.asm
+         case  ${tgt_os} in
+-            win*)
++            win*|cygwin*)
+                 add_asflags -f win${bits}
+                 enabled debug && add_asflags -g dwarf2
+             ;;
+--- origsrc/libvpx-0.9.0/configure	2010-05-18 10:58:33.000000000 -0500
++++ src/libvpx-0.9.0/configure	2010-05-31 12:44:29.225510300 -0500
+@@ -95,6 +95,7 @@ all_platforms="${all_platforms} ppc32-da
+ all_platforms="${all_platforms} ppc64-darwin8-gcc"
+ all_platforms="${all_platforms} ppc64-darwin9-gcc"
+ all_platforms="${all_platforms} ppc64-linux-gcc"
++all_platforms="${all_platforms} x86-cygwin-gcc"
+ all_platforms="${all_platforms} x86-darwin8-gcc"
+ all_platforms="${all_platforms} x86-darwin8-icc"
+ all_platforms="${all_platforms} x86-darwin9-gcc"

@@ -1,0 +1,35 @@
+DESCRIPTION="WebM VP8 video codec"
+HOMEPAGE="http://www.webmproject.org/"
+SRC_URI="http://webm.googlecode.com/files/${P}.tar.bz2"
+PATCH_URI="0.9.0-cygwin.patch"
+
+PKG_NAMES="${PN} libvpx0 libvpx-devel"
+libvpx0_CONTENTS="--exclude=html usr/bin/*-0.dll usr/share/doc/"
+libvpx_devel_CONTENTS="usr/include/ usr/lib/ usr/share/doc/${PN}/html/"
+
+src_compile() {
+	cd ${B}
+	${S}/configure \
+		--target=x86-cygwin-gcc \
+		--disable-install-srcs \
+		|| error "configure failed"
+	cygmake
+
+	${CC} -shared -o cygvpx-0.dll -Wl,--out-implib,libvpx.dll.a \
+		-Wl,--whole-archive,libvpx.a,--no-whole-archive \
+		|| error "shared library build failed"
+}
+
+src_install() {
+	cd ${B}
+	dobin *.dll
+	dolib libvpx.a libvpx.dll.a
+
+	cyginstall DIST_DIR=${P}
+	cd ${P}
+	insinto /usr/include/vpx
+	doins include/*.h
+
+	docinto html
+	dodoc docs/html/*
+}
