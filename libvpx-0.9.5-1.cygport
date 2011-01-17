@@ -1,7 +1,9 @@
 DESCRIPTION="WebM VP8 video codec"
 HOMEPAGE="http://www.webmproject.org/"
 SRC_URI="http://webm.googlecode.com/files/${PN}-v${PV}.tar.bz2"
-PATCH_URI="0.9.0-cygwin.patch"
+SRC_DIR="${PN}-v${PV}"
+
+PATCH_URI="0.9.5-cygwin.patch"
 
 PKG_NAMES="${PN} libvpx0 libvpx-devel"
 libvpx_CONTENTS="--exclude=html usr/bin/*.exe usr/share/doc/"
