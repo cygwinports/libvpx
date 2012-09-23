@@ -1,0 +1,45 @@
+NAME="libvpx"
+VERSION=1.1.0
+RELEASE=1
+CATEGORY="Video"
+SUMMARY="WebM VP8 video codec"
+DESCRIPTION="WebM is an open, royalty-free, media file format designed for
+the web. WebM defines the file container structure, video and audio formats.
+WebM files consist of video streams compressed with the VP8 video codec and
+audio streams compressed with the Vorbis audio codec. The WebM file structure
+is based on the Matroska container."
+HOMEPAGE="http://www.webmproject.org/"
+SRC_URI="http://webm.googlecode.com/files/${PN}-v${PV}.tar.bz2"
+SRC_DIR="${PN}-v${PV}"
+
+PKG_NAMES="${PN} libvpx1 libvpx-devel"
+libvpx_SUMMARY="${SUMMARY} (utilities)"
+libvpx_CONTENTS="--exclude=html usr/bin/*.exe usr/share/doc/"
+libvpx1_SUMMARY="${SUMMARY} (runtime)"
+libvpx1_CONTENTS="usr/bin/cygvpx-1.dll"
+libvpx_devel_SUMMARY="${SUMMARY} (development)"
+libvpx_devel_CONTENTS="usr/include/ usr/lib/ usr/share/doc/${PN}/html/"
+
+src_compile() {
+	cd ${B}
+	${S}/configure \
+		--prefix=/usr \
+		--target=x86-win32-gcc \
+		--disable-install-srcs \
+		|| error "configure failed"
+	cygmake
+
+	${CC} -shared -o cygvpx-1.dll -Wl,--out-implib,libvpx.dll.a \
+		-Wl,--whole-archive,libvpx.a,--no-whole-archive \
+		|| error "shared library build failed"
+}
+
+src_install() {
+	cd ${B}
+	cyginstall
+	dobin *.dll
+	dolib libvpx.dll.a
+
+	docinto html
+	dodoc docs/html/*
+}
