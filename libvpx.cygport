@@ -9,22 +9,22 @@ WebM files consist of video streams compressed with the VP8 video codec and
 audio streams compressed with the Vorbis audio codec. The WebM file structure
 is based on the Matroska container."
 HOMEPAGE="http://www.webmproject.org/"
-SRC_URI="http://webm.googlecode.com/files/${PN}-v${PV}.tar.bz2"
-SRC_DIR="${PN}-v${PV}"
+SRC_URI="http://webm.googlecode.com/files/${NAME}-v${VERSION}.tar.bz2"
+SRC_DIR="${NAME}-v${VERSION}"
 
-PKG_NAMES="${PN} libvpx1 libvpx-devel"
+PKG_NAMES="${NAME} libvpx1 libvpx-devel"
 libvpx_SUMMARY="${SUMMARY} (utilities)"
 libvpx_CONTENTS="--exclude=html usr/bin/*.exe usr/share/doc/"
 libvpx1_SUMMARY="${SUMMARY} (runtime)"
 libvpx1_CONTENTS="usr/bin/cygvpx-1.dll"
 libvpx_devel_SUMMARY="${SUMMARY} (development)"
-libvpx_devel_CONTENTS="usr/include/ usr/lib/ usr/share/doc/${PN}/html/"
+libvpx_devel_CONTENTS="usr/include/ usr/lib/ usr/share/doc/${NAME}/html/"
 
 src_compile() {
 	cd ${B}
 	${S}/configure \
 		--prefix=/usr \
-		--target=x86-win32-gcc \
+		--target=x86${ARCH_i686+-win32}${ARCH_x86_64+_64-win64}-gcc \
 		--disable-install-srcs \
 		|| error "configure failed"
 	cygmake
