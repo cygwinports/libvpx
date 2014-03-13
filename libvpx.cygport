@@ -1,7 +1,7 @@
 NAME="libvpx"
-VERSION=1.1.0
+VERSION=1.3.0
 RELEASE=1
-CATEGORY="Video"
+CATEGORY="Libs"
 SUMMARY="WebM VP8 video codec"
 DESCRIPTION="WebM is an open, royalty-free, media file format designed for
 the web. WebM defines the file container structure, video and audio formats.
@@ -12,13 +12,17 @@ HOMEPAGE="http://www.webmproject.org/"
 SRC_URI="http://webm.googlecode.com/files/${NAME}-v${VERSION}.tar.bz2"
 SRC_DIR="${NAME}-v${VERSION}"
 
-PKG_NAMES="${NAME} libvpx1 libvpx-devel"
+PKG_NAMES="${NAME} libvpx1 libvpx-devel libvpx-doc"
+libvpx_CATEGORY="Video"
 libvpx_SUMMARY="${SUMMARY} (utilities)"
 libvpx_CONTENTS="--exclude=html usr/bin/*.exe usr/share/doc/"
 libvpx1_SUMMARY="${SUMMARY} (runtime)"
 libvpx1_CONTENTS="usr/bin/cygvpx-1.dll"
 libvpx_devel_SUMMARY="${SUMMARY} (development)"
-libvpx_devel_CONTENTS="usr/include/ usr/lib/ usr/share/doc/${NAME}/html/"
+libvpx_devel_CONTENTS="usr/include/ usr/lib/"
+libvpx_doc_CATEGORY="Doc"
+libvpx_doc_SUMMARY="${SUMMARY} (API documentation)"
+libvpx_doc_CONTENTS="usr/share/doc/${NAME}/html/"
 
 src_compile() {
 	cd ${B}
@@ -27,17 +31,25 @@ src_compile() {
 		--target=x86${ARCH_i686+-win32}${ARCH_x86_64+_64-win64}-gcc \
 		--disable-install-srcs \
 		|| error "configure failed"
-	cygmake
+	# keep debug symbols
+	cygmake HAVE_GNU_STRIP=no
 
 	${CC} -shared -o cygvpx-1.dll -Wl,--out-implib,libvpx.dll.a \
 		-Wl,--whole-archive,libvpx.a,--no-whole-archive \
 		|| error "shared library build failed"
+
+
+	# link executables dynamically
+	rm -f *.exe
+	cygmake HAVE_GNU_STRIP=no
 }
 
 src_install() {
 	cd ${B}
 	cyginstall
-	dobin *.dll
+	rm -f ${D}/usr/lib/libvpx.a
+
+	dobin cygvpx-1.dll
 	dolib libvpx.dll.a
 
 	docinto html
