@@ -1,6 +1,6 @@
 NAME="libvpx"
 VERSION=1.3.0
-RELEASE=1
+RELEASE=2
 CATEGORY="Libs"
 SUMMARY="WebM VP8 video codec"
 DESCRIPTION="WebM is an open, royalty-free, media file format designed for
@@ -11,18 +11,25 @@ is based on the Matroska container."
 HOMEPAGE="http://www.webmproject.org/"
 SRC_URI="http://webm.googlecode.com/files/${NAME}-v${VERSION}.tar.bz2"
 SRC_DIR="${NAME}-v${VERSION}"
+PATCH_URI="
+	http://pkgs.fedoraproject.org/cgit/libvpx.git/plain/Bug-fix-in-ssse3-quantize-function.patch?h=f22
+	http://pkgs.fedoraproject.org/cgit/libvpx.git/plain/libvpx-1.3.0-CVE-2015-1258.patch?h=f22
+	http://pkgs.fedoraproject.org/cgit/libvpx.git/plain/libvpx-v1.3.0-fix-max_align_t-conflict.patch?h=f22
+"
 
-PKG_NAMES="${NAME} libvpx1 libvpx-devel libvpx-doc"
-libvpx_CATEGORY="Video"
-libvpx_SUMMARY="${SUMMARY} (utilities)"
-libvpx_CONTENTS="--exclude=html usr/bin/*.exe usr/share/doc/"
+PKG_NAMES="${NAME} libvpx1 libvpx-devel libvpx-doc libvpx-utils"
+libvpx_CATEGORY="_obsolete"
+libvpx_REQUIRES="libvpx-utils"
 libvpx1_SUMMARY="${SUMMARY} (runtime)"
-libvpx1_CONTENTS="usr/bin/cygvpx-1.dll"
+libvpx1_CONTENTS="--exclude=html usr/bin/cygvpx-1.dll usr/share/doc/"
 libvpx_devel_SUMMARY="${SUMMARY} (development)"
 libvpx_devel_CONTENTS="usr/include/ usr/lib/"
 libvpx_doc_CATEGORY="Doc"
 libvpx_doc_SUMMARY="${SUMMARY} (API documentation)"
 libvpx_doc_CONTENTS="usr/share/doc/${NAME}/html/"
+libvpx_utils_CATEGORY="Video"
+libvpx_utils_SUMMARY="${SUMMARY} (utilities)"
+libvpx_utils_CONTENTS="usr/bin/*.exe"
 
 src_compile() {
 	cd ${B}
