@@ -1,6 +1,6 @@
 NAME="libvpx"
-VERSION=1.3.0
-RELEASE=2
+VERSION=1.5.0
+RELEASE=1
 CATEGORY="Libs"
 SUMMARY="WebM VP8 video codec"
 DESCRIPTION="WebM is an open, royalty-free, media file format designed for
@@ -9,19 +9,13 @@ WebM files consist of video streams compressed with the VP8 video codec and
 audio streams compressed with the Vorbis audio codec. The WebM file structure
 is based on the Matroska container."
 HOMEPAGE="http://www.webmproject.org/"
-SRC_URI="http://webm.googlecode.com/files/${NAME}-v${VERSION}.tar.bz2"
-SRC_DIR="${NAME}-v${VERSION}"
-PATCH_URI="
-	http://pkgs.fedoraproject.org/cgit/libvpx.git/plain/Bug-fix-in-ssse3-quantize-function.patch?h=f22
-	http://pkgs.fedoraproject.org/cgit/libvpx.git/plain/libvpx-1.3.0-CVE-2015-1258.patch?h=f22
-	http://pkgs.fedoraproject.org/cgit/libvpx.git/plain/libvpx-v1.3.0-fix-max_align_t-conflict.patch?h=f22
-"
+SRC_URI="http://downloads.webmproject.org/releases/webm/${NAME}-${VERSION}.tar.bz2"
 
-PKG_NAMES="${NAME} libvpx1 libvpx-devel libvpx-doc libvpx-utils"
+PKG_NAMES="${NAME} libvpx3 libvpx-devel libvpx-doc libvpx-utils"
 libvpx_CATEGORY="_obsolete"
 libvpx_REQUIRES="libvpx-utils"
-libvpx1_SUMMARY="${SUMMARY} (runtime)"
-libvpx1_CONTENTS="--exclude=html usr/bin/cygvpx-1.dll usr/share/doc/"
+libvpx3_SUMMARY="${SUMMARY} (runtime)"
+libvpx3_CONTENTS="--exclude=html usr/bin/cygvpx-3.dll usr/share/doc/"
 libvpx_devel_SUMMARY="${SUMMARY} (development)"
 libvpx_devel_CONTENTS="usr/include/ usr/lib/"
 libvpx_doc_CATEGORY="Doc"
@@ -36,12 +30,16 @@ src_compile() {
 	${S}/configure \
 		--prefix=/usr \
 		--target=x86${ARCH_i686+-win32}${ARCH_x86_64+_64-win64}-gcc \
+		--enable-vp9-decoder --enable-vp9-encoder \
+		--enable-vp10-decoder --enable-vp10-encoder \
+		--enable-experimental --enable-spatial-svc \
 		--disable-install-srcs \
+		--size-limit=16384x16384 \
 		|| error "configure failed"
 	# keep debug symbols
 	cygmake HAVE_GNU_STRIP=no
 
-	${CC} -shared -o cygvpx-1.dll -Wl,--out-implib,libvpx.dll.a \
+	${CC} -shared -o cygvpx-3.dll -Wl,--out-implib,libvpx.dll.a \
 		-Wl,--whole-archive,libvpx.a,--no-whole-archive \
 		|| error "shared library build failed"
 
@@ -56,7 +54,7 @@ src_install() {
 	cyginstall
 	rm -f ${D}/usr/lib/libvpx.a
 
-	dobin cygvpx-1.dll
+	dobin cygvpx-3.dll
 	dolib libvpx.dll.a
 
 	docinto html
